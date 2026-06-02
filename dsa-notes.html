@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyDSA — Notes</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans Thai', sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      display: flex;
+      min-height: 100vh;
+      line-height: 1.75;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 236px;
+      min-height: 100vh;
+      background: #161b22;
+      border-right: 1px solid #30363d;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid #30363d;
+    }
+
+    .sidebar-header h1 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #58a6ff;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .sidebar-header p {
+      font-size: 11px;
+      color: #8b949e;
+      margin-top: 4px;
+    }
+
+    .nav { padding: 10px 0; flex: 1; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 11px 20px;
+      cursor: pointer;
+      color: #8b949e;
+      font-size: 13.5px;
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+      user-select: none;
+    }
+
+    .nav-item:hover { background: #21262d; color: #c9d1d9; }
+
+    .nav-item.active {
+      background: #1f2937;
+      color: #58a6ff;
+      border-left-color: #58a6ff;
+    }
+
+    .nav-icon {
+      font-size: 15px;
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* ── Content ── */
+    .content {
+      margin-left: 236px;
+      flex: 1;
+      padding: 44px 64px;
+      max-width: 860px;
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── Typography ── */
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #e6edf3;
+      margin-bottom: 28px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #30363d;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #e6edf3;
+      margin: 36px 0 12px;
+    }
+
+    h3 {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #79c0ff;
+      margin: 22px 0 8px;
+    }
+
+    p { margin-bottom: 12px; }
+
+    hr {
+      border: none;
+      border-top: 1px solid #21262d;
+      margin: 32px 0;
+    }
+
+    blockquote {
+      border-left: 3px solid #388bfd;
+      padding: 10px 16px;
+      margin: 16px 0;
+      background: #161b22;
+      border-radius: 0 6px 6px 0;
+      color: #8b949e;
+      font-style: italic;
+    }
+
+    strong { color: #e6edf3; font-weight: 600; }
+
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Code ── */
+    pre {
+      margin: 12px 0 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+
+    /* plain code block fallback bg */
+    pre:not([class]) code, pre code.language-none {
+      background: #161b22;
+      display: block;
+      padding: 16px 20px;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+      line-height: 1.6;
+    }
+
+    pre[class*="language-"] {
+      border: 1px solid #30363d;
+    }
+
+    code:not(pre code) {
+      background: #21262d;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #f0883e;
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    }
+
+    pre code {
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 24px;
+      font-size: 13.5px;
+    }
+
+    th {
+      background: #21262d;
+      color: #e6edf3;
+      padding: 9px 14px;
+      text-align: left;
+      border: 1px solid #30363d;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 8px 14px;
+      border: 1px solid #30363d;
+    }
+
+    tr:nth-child(even) td { background: #161b22; }
+
+    /* ── Lists ── */
+    ul, ol { margin: 6px 0 14px 22px; }
+    li { margin-bottom: 5px; }
+
+    /* ── Resource cards ── */
+    .resource-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 22px 24px;
+      margin: 18px 0;
+      transition: border-color 0.15s;
+    }
+
+    .resource-card:hover { border-color: #58a6ff44; }
+
+    .resource-card h3 {
+      color: #e6edf3;
+      font-size: 15px;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .resource-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #1f6feb33;
+      color: #58a6ff;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11.5px;
+      font-weight: 500;
+    }
+
+    .order-hint {
+      background: #1f6feb12;
+      border: 1px solid #1f6feb44;
+      border-radius: 8px;
+      padding: 13px 18px;
+      margin-bottom: 24px;
+      font-size: 13.5px;
+      color: #79c0ff;
+    }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>MyDSA</h1>
+    <p>Week 14 — JSD12</p>
+  </div>
+  <nav class="nav">
+    <div class="nav-item active" onclick="showPage('big-o', this)">
+      <span class="nav-icon">O</span>
+      <span>Big-O Notation</span>
+    </div>
+    <div class="nav-item" onclick="showPage('sorting', this)">
+      <span class="nav-icon">↕</span>
+      <span>Sorting</span>
+    </div>
+    <div class="nav-item" onclick="showPage('binary-search', this)">
+      <span class="nav-icon">⟨⟩</span>
+      <span>Binary Search</span>
+    </div>
+    <div class="nav-item" onclick="showPage('bfs-dfs', this)">
+      <span class="nav-icon">⬡</span>
+      <span>BFS &amp; DFS</span>
+    </div>
+    <div class="nav-item" onclick="showPage('resources', this)">
+      <span class="nav-icon">▶</span>
+      <span>แหล่งเรียนรู้</span>
+    </div>
+  </nav>
+</aside>
+
+<main class="content">
+
+  <!-- ══════════════ Big-O ══════════════ -->
+  <section id="big-o" class="page active">
+    <h1>Big-O Notation &amp; Time Complexity</h1>
+
+    <h2>Big-O คืออะไร?</h2>
+    <p>Big-O คือวิธีวัดว่า <strong>algorithm ช้าลงแค่ไหน เมื่อ input ใหญ่ขึ้น</strong></p>
+    <p>ไม่ได้วัดเวลาจริง (วินาที) แต่วัด "อัตราการเติบโต" ของงานที่ต้องทำ</p>
+    <blockquote>ถ้า input เพิ่มขึ้น 10 เท่า → งานเพิ่มขึ้นกี่เท่า?</blockquote>
+
+    <hr>
+
+    <h2>ลำดับความเร็ว (เร็ว → ช้า)</h2>
+    <pre><code>O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n²) &lt; O(2ⁿ) &lt; O(n!)</code></pre>
+
+    <hr>
+
+    <h2>แต่ละ Complexity หมายความว่าอะไร</h2>
+
+    <h3>O(1) — Constant</h3>
+    <p>ไม่ว่า input จะใหญ่แค่ไหน งานเท่าเดิมเสมอ</p>
+    <pre><code class="language-js">const first = arr[0]  // เข้าถึง index ตรงๆ ไม่ต้องวนลูป</code></pre>
+
+    <h3>O(log n) — Logarithmic</h3>
+    <p>ทุกรอบ ตัด input ออกครึ่งนึง → งานเพิ่มช้ามาก</p>
+    <pre><code>input 8  → ทำ 3 รอบ  (8 → 4 → 2 → 1)
+input 16 → ทำ 4 รอบ
+input 1M → ทำแค่ ~20 รอบ</code></pre>
+
+    <h3>O(n) — Linear</h3>
+    <p>ยิ่ง input มาก ยิ่งทำงานมากตามสัดส่วน</p>
+    <pre><code class="language-js">for (let i = 0; i &lt; arr.length; i++) {
+  // วนครบทุก element
+}</code></pre>
+
+    <h3>O(n log n) — Linearithmic</h3>
+    <p>เกิดจากการ "แบ่งครึ่ง" แต่ต้องวน n รอบในแต่ละชั้น<br>พบมากใน sorting ที่ดี เช่น Merge Sort, Quick Sort</p>
+
+    <h3>O(n²) — Quadratic</h3>
+    <p>มี loop ซ้อน loop → input เพิ่ม 2 เท่า งานเพิ่ม 4 เท่า</p>
+    <pre><code class="language-js">for (let i = 0; i &lt; arr.length; i++) {
+  for (let j = 0; j &lt; arr.length; j++) {
+    // ทำงาน n × n ครั้ง
+  }
+}</code></pre>
+
+    <h3>O(2ⁿ) — Exponential</h3>
+    <p>เพิ่ม input แค่ 1 → งานเพิ่มเป็น 2 เท่า อันตราย</p>
+    <pre><code class="language-js">// Fibonacci แบบ naive recursive
+function fib(n) {
+  return fib(n - 1) + fib(n - 2)  // แตกเป็น 2 branches ทุกครั้ง
+}</code></pre>
+
+    <hr>
+
+    <h2>กฎการวิเคราะห์</h2>
+
+    <h3>1. ตัด constant ออก</h3>
+    <pre><code>O(2n)    → O(n)
+O(500)   → O(1)
+O(13n²)  → O(n²)</code></pre>
+
+    <h3>2. เก็บแค่ term ที่ใหญ่สุด</h3>
+    <pre><code>O(n² + n)     → O(n²)
+O(n + log n)  → O(n)</code></pre>
+
+    <h3>3. Loop ซ้อน = คูณ</h3>
+    <pre><code>O(n) loop ใน O(n) loop = O(n²)</code></pre>
+
+    <h3>4. Code ต่อกัน = บวก แล้วค่อย simplify</h3>
+    <pre><code>O(n) + O(n)  = O(2n)      → O(n)
+O(n) + O(n²) = O(n² + n)  → O(n²)</code></pre>
+
+    <hr>
+
+    <h2>Space Complexity</h2>
+    <p>วัดเหมือนกัน แต่วัด <strong>memory</strong> ที่ใช้ ไม่ใช่เวลา</p>
+    <pre><code class="language-js">// O(1) space — ไม่สร้าง array ใหม่
+function sum(arr) {
+  let total = 0
+  for (let n of arr) total += n
+  return total
+}
+
+// O(n) space — สร้าง array ใหม่ขนาด n
+function double(arr) {
+  return arr.map(n =&gt; n * 2)
+}</code></pre>
+
+    <hr>
+
+    <h2>สรุปเร็ว</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Complexity</th>
+          <th>ชื่อ</th>
+          <th>รู้สึกยังไงเมื่อ n = 1,000,000</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>O(1)</td><td>Constant</td><td>ทำทันที</td></tr>
+        <tr><td>O(log n)</td><td>Logarithmic</td><td>~20 steps เท่านั้น</td></tr>
+        <tr><td>O(n)</td><td>Linear</td><td>1 ล้าน steps</td></tr>
+        <tr><td>O(n log n)</td><td>Linearithmic</td><td>~20 ล้าน steps</td></tr>
+        <tr><td>O(n²)</td><td>Quadratic</td><td>1 ล้านล้าน steps (ช้ามาก)</td></tr>
+        <tr><td>O(2ⁿ)</td><td>Exponential</td><td>ทำไม่ได้เลย</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ══════════════ Sorting ══════════════ -->
+  <section id="sorting" class="page">
+    <h1>Sorting Algorithms</h1>
+
+    <h2>ภาพรวม</h2>
+    <table>
+      <thead>
+        <tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Bubble Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td></tr>
+        <tr><td>Selection Sort</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>No</td></tr>
+        <tr><td>Insertion Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td></tr>
+        <tr><td>Merge Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>Yes</td></tr>
+        <tr><td>Quick Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td>No</td></tr>
+      </tbody>
+    </table>
+    <blockquote><strong>Stable</strong> = ถ้า element ค่าเท่ากัน ลำดับเดิมจะยังคงอยู่หลัง sort</blockquote>
+
+    <hr>
+
+    <h2>Bubble Sort</h2>
+    <h3>ไอเดีย</h3>
+    <p>วนซ้ำ เปรียบเทียบคู่ข้างกัน ถ้าซ้ายมากกว่าขวา → swap<br>
+    ทำซ้ำจนไม่มีการ swap → เรียงเรียบร้อย<br>
+    element ที่ใหญ่สุดจะ "ลอยขึ้น" ไปอยู่ท้ายสุดทุก pass</p>
+
+    <h3>ตัวอย่าง</h3>
+    <pre><code>[5, 3, 8, 1]
+pass 1: [3, 5, 1, 8]  → 8 ไปอยู่ท้าย
+pass 2: [3, 1, 5, 8]  → 5 ไปอยู่ที่ตำแหน่งถูกต้อง
+pass 3: [1, 3, 5, 8]  → เรียบร้อย</code></pre>
+
+    <pre><code class="language-js">function bubbleSort(arr) {
+  for (let i = 0; i &lt; arr.length; i++) {
+    for (let j = 0; j &lt; arr.length - i - 1; j++) {
+      if (arr[j] &gt; arr[j + 1]) {
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]]  // swap
+      }
+    }
+  }
+  return arr
+}</code></pre>
+    <p><strong>ใช้เมื่อ</strong>: array เล็กมาก หรือเรียนรู้ concept เท่านั้น ไม่เหมาะ production</p>
+
+    <hr>
+
+    <h2>Selection Sort</h2>
+    <h3>ไอเดีย</h3>
+    <p>หา element ที่เล็กสุดใน array ที่เหลือ แล้ว swap มาไว้ข้างหน้า ทำซ้ำจนครบ</p>
+
+    <h3>ตัวอย่าง</h3>
+    <pre><code>[5, 3, 8, 1]
+pass 1: หา min=1 → swap กับ index 0 → [1, 3, 8, 5]
+pass 2: หา min=3 → อยู่ที่เดิม    → [1, 3, 8, 5]
+pass 3: หา min=5 → swap กับ index 2 → [1, 3, 5, 8]</code></pre>
+
+    <pre><code class="language-js">function selectionSort(arr) {
+  for (let i = 0; i &lt; arr.length; i++) {
+    let minIndex = i
+    for (let j = i + 1; j &lt; arr.length; j++) {
+      if (arr[j] &lt; arr[minIndex]) minIndex = j
+    }
+    if (minIndex !== i) {
+      [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]]  // swap
+    }
+  }
+  return arr
+}</code></pre>
+    <p><strong>ใช้เมื่อ</strong>: ต้องการ minimize จำนวน swap (swap แค่ n-1 ครั้ง)</p>
+
+    <hr>
+
+    <h2>Insertion Sort</h2>
+    <h3>ไอเดีย</h3>
+    <p>เหมือนจัดไพ่ในมือ — หยิบ element ใหม่ แล้วเสียบเข้าตำแหน่งที่ถูกต้องใน "ส่วนที่ sort แล้ว"</p>
+
+    <h3>ตัวอย่าง</h3>
+    <pre><code>[5, 3, 8, 1]
+[5 | 3, 8, 1] → หยิบ 3 เสียบหน้า 5   → [3, 5 | 8, 1]
+[3, 5 | 8, 1] → หยิบ 8 ใส่ท้ายได้เลย  → [3, 5, 8 | 1]
+[3, 5, 8 | 1] → หยิบ 1 เสียบหน้าสุด   → [1, 3, 5, 8]</code></pre>
+
+    <pre><code class="language-js">function insertionSort(arr) {
+  for (let i = 1; i &lt; arr.length; i++) {
+    const current = arr[i]
+    let j = i - 1
+    while (j &gt;= 0 &amp;&amp; arr[j] &gt; current) {
+      arr[j + 1] = arr[j]  // เลื่อนไปขวา
+      j--
+    }
+    arr[j + 1] = current  // เสียบตำแหน่งที่ถูกต้อง
+  }
+  return arr
+}</code></pre>
+    <p><strong>ใช้เมื่อ</strong>: array เกือบ sort แล้ว (best case O(n)) หรือ array เล็ก</p>
+
+    <hr>
+
+    <h2>Merge Sort</h2>
+    <h3>ไอเดีย</h3>
+    <p><strong>Divide &amp; Conquer</strong> — แบ่งครึ่งจนเหลือ array ขนาด 1 แล้วค่อย merge กลับ<br>
+    การ merge สองอาร์เรย์ที่ sort แล้ว → ง่ายมาก แค่เปรียบเทียบหัว</p>
+
+    <pre><code>[5, 3, 8, 1]
+   ↓ แบ่ง
+[5, 3]  [8, 1]
+   ↓ แบ่งอีก
+[5][3]  [8][1]
+   ↓ merge
+[3, 5]  [1, 8]
+   ↓ merge
+[1, 3, 5, 8]</code></pre>
+
+    <pre><code class="language-js">function mergeSort(arr) {
+  if (arr.length &lt;= 1) return arr
+
+  const mid = Math.floor(arr.length / 2)
+  const left = mergeSort(arr.slice(0, mid))
+  const right = mergeSort(arr.slice(mid))
+
+  return merge(left, right)
+}
+
+function merge(left, right) {
+  const result = []
+  let l = 0, r = 0
+
+  while (l &lt; left.length &amp;&amp; r &lt; right.length) {
+    if (left[l] &lt;= right[r]) result.push(left[l++])
+    else result.push(right[r++])
+  }
+
+  return [...result, ...left.slice(l), ...right.slice(r)]
+}</code></pre>
+    <p><strong>ใช้เมื่อ</strong>: ต้องการ stable sort ที่รับประกัน O(n log n) เสมอ, array ใหญ่</p>
+
+    <hr>
+
+    <h2>Quick Sort</h2>
+    <h3>ไอเดีย</h3>
+    <p>เลือก <strong>pivot</strong> (ตัวอ้างอิง) แล้วจัดให้ ตัวเล็กกว่า pivot → ไปซ้าย / ตัวใหญ่กว่า → ไปขวา<br>
+    แล้วทำซ้ำ (recurse) กับซ้ายและขวา</p>
+
+    <pre><code>[5, 3, 8, 1]  pivot = 5
+  ↓
+[3, 1] [5] [8]   → 3,1 น้อยกว่า 5 | 8 มากกว่า 5
+  ↓
+[1, 3] [5] [8]
+  ↓
+[1, 3, 5, 8]</code></pre>
+
+    <pre><code class="language-js">function quickSort(arr) {
+  if (arr.length &lt;= 1) return arr
+
+  const pivot = arr[arr.length - 1]
+  const left = arr.slice(0, -1).filter(x =&gt; x &lt;= pivot)
+  const right = arr.slice(0, -1).filter(x =&gt; x &gt; pivot)
+
+  return [...quickSort(left), pivot, ...quickSort(right)]
+}</code></pre>
+    <p><strong>ใช้เมื่อ</strong>: ต้องการ average performance ดีที่สุด, cache-friendly</p>
+    <p><strong>ระวัง</strong>: worst case O(n²) เมื่อ array sort แล้วและเลือก pivot แย่</p>
+
+    <hr>
+
+    <h2>เลือก Sorting Algorithm ยังไง?</h2>
+    <pre><code>array เล็กมาก (&lt; 20)?            → Insertion Sort
+ต้องการ stable?                  → Merge Sort
+ต้องการ memory น้อย?             → Quick Sort หรือ Heap Sort
+array เกือบ sort แล้ว?           → Insertion Sort
+ต้องการ worst case O(n log n)?   → Merge Sort
+ทั่วไป (built-in sort)?          → ภาษาส่วนใหญ่ใช้ Timsort (Merge + Insertion)</code></pre>
+  </section>
+
+  <!-- ══════════════ Binary Search ══════════════ -->
+  <section id="binary-search" class="page">
+    <h1>Binary Search</h1>
+
+    <h2>ไอเดียหลัก</h2>
+    <p>Binary Search คือการค้นหาใน <strong>array ที่ sort แล้ว</strong> โดยการ <strong>ตัดครึ่ง</strong> ทุกรอบ</p>
+    <p>แทนที่จะดูทีละตัวจากซ้าย → ดูตรงกลางก่อน แล้วตัดสินใจว่าจะหาซ้ายหรือขวา</p>
+    <blockquote>เหมือนหาคำในพจนานุกรม — เปิดกลาง ถ้าคำที่หาอยู่หลัง ก็ตัดครึ่งซ้ายออก</blockquote>
+
+    <hr>
+
+    <h2>Time &amp; Space Complexity</h2>
+    <table>
+      <thead>
+        <tr><th></th><th>Complexity</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Time (Best)</td><td>O(1) — เจอที่ตำแหน่งกลางทันที</td></tr>
+        <tr><td>Time (Average/Worst)</td><td>O(log n)</td></tr>
+        <tr><td>Space (Iterative)</td><td>O(1)</td></tr>
+        <tr><td>Space (Recursive)</td><td>O(log n) — call stack</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>เปรียบเทียบ</strong>: array 1,000,000 ตัว</p>
+    <ul>
+      <li>Linear Search → ดูสูงสุด 1,000,000 ครั้ง</li>
+      <li>Binary Search → ดูสูงสุด <strong>20 ครั้ง</strong> (log₂ 1,000,000 ≈ 20)</li>
+    </ul>
+
+    <hr>
+
+    <h2>วิธีทำงาน</h2>
+    <pre><code>หา 7 ใน [1, 3, 5, 7, 9, 11, 13]
+             ↑         ↑          ↑
+           left       mid       right
+
+mid = arr[3] = 7 ✓ เจอแล้ว!
+
+---
+
+หา 5 ใน [1, 3, 5, 7, 9, 11, 13]
+left=0, right=6, mid=3 → arr[3]=7 &gt; 5 → หาซ้าย (right=2)
+left=0, right=2, mid=1 → arr[1]=3 &lt; 5 → หาขวา (left=2)
+left=2, right=2, mid=2 → arr[2]=5 = 5 ✓ เจอ!</code></pre>
+
+    <hr>
+
+    <h2>Implementation</h2>
+
+    <h3>Iterative (แนะนำ — Space O(1))</h3>
+    <pre><code class="language-js">function binarySearch(arr, target) {
+  let left = 0
+  let right = arr.length - 1
+
+  while (left &lt;= right) {
+    const mid = Math.floor((left + right) / 2)
+
+    if (arr[mid] === target) return mid       // เจอ → return index
+    if (arr[mid] &lt; target) left = mid + 1    // target อยู่ขวา
+    else right = mid - 1                      // target อยู่ซ้าย
+  }
+
+  return -1  // ไม่เจอ
+}</code></pre>
+
+    <h3>Recursive (เข้าใจ concept ดีกว่า แต่ใช้ Stack)</h3>
+    <pre><code class="language-js">function binarySearch(arr, target, left = 0, right = arr.length - 1) {
+  if (left &gt; right) return -1  // base case: ไม่เจอ
+
+  const mid = Math.floor((left + right) / 2)
+
+  if (arr[mid] === target) return mid
+  if (arr[mid] &lt; target) return binarySearch(arr, target, mid + 1, right)
+  return binarySearch(arr, target, left, mid - 1)
+}</code></pre>
+
+    <hr>
+
+    <h2>ข้อควรระวัง</h2>
+    <p><strong>ต้อง sort ก่อนเสมอ</strong> — ถ้า array ไม่ได้ sort ผลลัพธ์ผิดแน่นอน</p>
+    <pre><code class="language-js">// ผิด — array ยังไม่ sort
+binarySearch([5, 3, 8, 1], 3)  // อาจ return -1 ทั้งที่ 3 อยู่ใน array
+
+// ถูก
+binarySearch([1, 3, 5, 8], 3)  // return 1 ✓</code></pre>
+
+    <p><strong>Mid calculation</strong> — อย่าใช้ <code>(left + right) / 2</code> ใน low-level language เพราะ integer overflow<br>
+    ใน JS ไม่มีปัญหา แต่รู้ไว้ดีกว่า: safe version คือ <code>left + Math.floor((right - left) / 2)</code></p>
+
+    <hr>
+
+    <h2>เมื่อไหร่ควรใช้ Binary Search?</h2>
+    <pre><code>✓ array/list ถูก sort แล้ว
+✓ ต้องการหาค่าหรือตำแหน่งใน O(log n)
+✓ ข้อมูลใหญ่มาก linear search ช้าเกินไป
+
+✗ array ไม่ได้ sort (ต้องเสีย O(n log n) sort ก่อน → อาจไม่คุ้ม)
+✗ ข้อมูลเล็กมาก (linear search ง่ายกว่า เร็วพอ)</code></pre>
+
+    <hr>
+
+    <h2>Binary Search บน "เงื่อนไข" (แบบ advanced)</h2>
+    <p>บางครั้งใช้ Binary Search ไม่ใช่แค่หาค่า แต่หา <strong>จุดเปลี่ยน</strong> ของเงื่อนไข</p>
+    <pre><code>หา index แรกสุดที่ arr[i] &gt;= target
+หา จำนวน minimum ที่ทำให้เงื่อนไขเป็น true</code></pre>
+    <p>Pattern นี้เรียกว่า "Binary Search on Answer" — พบบ่อยในโจทย์ competitive programming</p>
+  </section>
+
+  <!-- ══════════════ BFS & DFS ══════════════ -->
+  <section id="bfs-dfs" class="page">
+    <h1>BFS &amp; DFS (Graph Traversal)</h1>
+
+    <h2>Graph คืออะไร?</h2>
+    <p>Graph คือโครงสร้างที่มี <strong>node (vertex)</strong> และ <strong>edge</strong> เชื่อมกัน</p>
+    <pre><code>    A
+   / \
+  B   C
+ / \
+D   E</code></pre>
+
+    <p>แทนด้วย Adjacency List ใน JS:</p>
+    <pre><code class="language-js">const graph = {
+  A: ['B', 'C'],
+  B: ['D', 'E'],
+  C: [],
+  D: [],
+  E: []
+}</code></pre>
+
+    <hr>
+
+    <h2>Complexity ของทั้งสอง</h2>
+    <table>
+      <thead>
+        <tr><th></th><th>Time</th><th>Space</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>BFS</td><td>O(V + E)</td><td>O(V)</td></tr>
+        <tr><td>DFS</td><td>O(V + E)</td><td>O(V)</td></tr>
+      </tbody>
+    </table>
+    <ul>
+      <li><strong>V</strong> = จำนวน vertices (nodes)</li>
+      <li><strong>E</strong> = จำนวน edges</li>
+      <li>O(V + E) เพราะต้องเยี่ยมทุก node และทุก edge อย่างน้อยครั้งหนึ่ง</li>
+    </ul>
+
+    <hr>
+
+    <h2>BFS — Breadth-First Search</h2>
+    <h3>ไอเดีย</h3>
+    <p>เดินทีละชั้น (level) ก่อน — เยี่ยมทุก neighbor ของ node ปัจจุบันก่อน แล้วค่อยไปชั้นถัดไป</p>
+    <p>ใช้ <strong>Queue</strong> (FIFO) เป็นตัวช่วย</p>
+
+    <h3>ลำดับการเดิน</h3>
+    <pre><code>    A          เริ่มที่ A
+   / \
+  B   C        ชั้น 1: B, C
+ / \
+D   E          ชั้น 2: D, E
+
+ลำดับ: A → B → C → D → E</code></pre>
+
+    <h3>Implementation</h3>
+    <pre><code class="language-js">function bfs(graph, start) {
+  const visited = new Set()
+  const queue = [start]
+  const result = []
+
+  visited.add(start)
+
+  while (queue.length &gt; 0) {
+    const node = queue.shift()  // ดึงออกจากหน้า queue
+    result.push(node)
+
+    for (const neighbor of graph[node]) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor)
+        queue.push(neighbor)   // เพิ่มเข้าท้าย queue
+      }
+    }
+  }
+
+  return result
+}</code></pre>
+
+    <hr>
+
+    <h2>DFS — Depth-First Search</h2>
+    <h3>ไอเดีย</h3>
+    <p>เดินลึกสุดก่อน — ไปตาม path จนสุดทาง แล้วค่อย backtrack กลับมาหาทาง branching ถัดไป</p>
+    <p>ใช้ <strong>Stack</strong> (LIFO) หรือ <strong>Recursion</strong></p>
+
+    <h3>ลำดับการเดิน</h3>
+    <pre><code>    A          เริ่มที่ A
+   / \
+  B   C        ไป B ก่อน
+ / \
+D   E          ไปลึกสุด D ก่อน แล้ว backtrack ไป E แล้วค่อยไป C
+
+ลำดับ: A → B → D → E → C</code></pre>
+
+    <h3>Implementation (Recursive)</h3>
+    <pre><code class="language-js">function dfs(graph, node, visited = new Set()) {
+  visited.add(node)
+  const result = [node]
+
+  for (const neighbor of graph[node]) {
+    if (!visited.has(neighbor)) {
+      result.push(...dfs(graph, neighbor, visited))
+    }
+  }
+
+  return result
+}</code></pre>
+
+    <h3>Implementation (Iterative — ใช้ Stack)</h3>
+    <pre><code class="language-js">function dfs(graph, start) {
+  const visited = new Set()
+  const stack = [start]
+  const result = []
+
+  while (stack.length &gt; 0) {
+    const node = stack.pop()  // ดึงออกจากหลัง stack
+
+    if (visited.has(node)) continue
+    visited.add(node)
+    result.push(node)
+
+    for (const neighbor of graph[node]) {
+      if (!visited.has(neighbor)) {
+        stack.push(neighbor)
+      }
+    }
+  }
+
+  return result
+}</code></pre>
+
+    <hr>
+
+    <h2>BFS vs DFS เลือกแบบไหน?</h2>
+    <table>
+      <thead>
+        <tr><th>สถานการณ์</th><th>ใช้อะไร</th><th>ทำไม</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>หา shortest path (unweighted)</td><td><strong>BFS</strong></td><td>รับประกันว่าเจอ path สั้นที่สุดก่อน</td></tr>
+        <tr><td>ตรวจว่า node เชื่อมกันไหม</td><td>ใช้ได้ทั้งคู่</td><td>ไม่ต่างกัน</td></tr>
+        <tr><td>หา cycle ใน graph</td><td><strong>DFS</strong></td><td>ง่ายกว่ากับ DFS recursive</td></tr>
+        <tr><td>Topological Sort</td><td><strong>DFS</strong></td><td>ใช้ post-order traversal</td></tr>
+        <tr><td>Maze solving</td><td><strong>DFS</strong></td><td>ลองทางจนสุดแล้ว backtrack</td></tr>
+        <tr><td>Social network (คนใกล้ที่สุดก่อน)</td><td><strong>BFS</strong></td><td>traverse ทีละ degree</td></tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <h2>ข้อควรระวัง</h2>
+    <p><strong>Visited set สำคัญมาก</strong> — ถ้าไม่ mark visited จะวนซ้ำไม่หยุด (infinite loop)</p>
+    <pre><code>A ↔ B  (เชื่อมสองทาง)
+ถ้าไม่ mark visited: A→B→A→B→A→... วนตลอด</code></pre>
+
+    <p><strong>DFS recursive กับ graph ใหญ่</strong> — อาจ stack overflow เพราะ call stack ลึกมาก<br>
+    ถ้า graph ใหญ่ ควรใช้ DFS iterative แทน</p>
+
+    <hr>
+
+    <h2>สรุปภาพรวม</h2>
+    <pre><code>BFS  =  Queue          =  เดินทีละชั้น     =  หา shortest path
+DFS  =  Stack/Recursion  =  ดำดิ่งลงก่อน  =  explore/backtrack</code></pre>
+  </section>
+
+  <!-- ══════════════ Resources ══════════════ -->
+  <section id="resources" class="page">
+    <h1>แหล่งเรียนรู้ Big-O Notation</h1>
+
+    <div class="order-hint">
+      แนะนำดูตามลำดับนี้: <strong>3 → 2 → 1</strong>&nbsp;&nbsp;เข้าใจ why ก่อน → ดู code จริง → ทบทวนเร็ว
+    </div>
+
+    <div class="resource-card">
+      <h3>1. Big-O Notation in 100 Seconds</h3>
+      <div class="resource-meta">
+        <span class="tag">Fireship</span>
+        <a href="https://www.youtube.com/watch?v=g2o22C3CRfU" target="_blank">youtube.com/watch?v=g2o22C3CRfU</a>
+      </div>
+      <p>คลิปสั้น 100 วินาที style Fireship — เน้น visual เร็วมาก เหมาะเปิดซ้ำ</p>
+      <p><strong>สิ่งที่สอน:</strong></p>
+      <ul>
+        <li>Big-O คือการวัด "อัตราการเติบโต" ของ algorithm ไม่ใช่เวลาจริง</li>
+        <li>โฟกัส worst-case scenario เสมอ</li>
+        <li>ครอบคลุม O(1), O(log n), O(n), O(n log n), O(n²) พร้อม visual</li>
+        <li>กฎ drop constants และ drop non-dominant terms</li>
+      </ul>
+      <p><strong>เหมาะกับ:</strong> คนที่อยากได้ภาพรวมก่อน หรือทบทวนแบบเร็ว</p>
+    </div>
+
+    <div class="resource-card">
+      <h3>2. Learn Big O Notation in 6 Minutes</h3>
+      <div class="resource-meta">
+        <span class="tag">Bro Code</span>
+        <a href="https://www.youtube.com/watch?v=XMUe3zFhM5c" target="_blank">youtube.com/watch?v=XMUe3zFhM5c</a>
+      </div>
+      <p>คลิปเข้าใจง่ายที่สุดใน 3 คลิป เน้น code ตัวอย่างจริงทุก complexity</p>
+      <p><strong>สิ่งที่สอน:</strong></p>
+      <ul>
+        <li>อธิบาย Big-O ด้วยโค้ดจริงแต่ละแบบ</li>
+        <li>ครอบคลุมครบ: O(1) → O(log n) → O(n) → O(n log n) → O(n²) → O(2ⁿ) → O(n!)</li>
+        <li>เน้น "จำนวน steps ที่ต้องทำ" ไม่ใช่เวลา</li>
+        <li>ให้เห็นว่า input โตขึ้น steps โตตามยังไง</li>
+      </ul>
+      <p><strong>เหมาะกับ:</strong> คนเพิ่งเริ่ม อยากเห็น code จริงประกอบทุก complexity</p>
+    </div>
+
+    <div class="resource-card">
+      <h3>3. Basic Big O เรื่องที่ทำให้เด็กมหาลัยหลายๆคนปวดหัว !!!</h3>
+      <div class="resource-meta">
+        <span class="tag">ภาษาไทย</span>
+        <a href="https://www.youtube.com/watch?v=lWHbg1SrUqc" target="_blank">youtube.com/watch?v=lWHbg1SrUqc</a>
+      </div>
+      <p>คลิปภาษาไทย เน้นตอบคำถามว่า "ทำไมต้องสนใจ Big-O?"</p>
+      <p><strong>สิ่งที่สอน:</strong></p>
+      <ul>
+        <li>code ที่ output เหมือนกัน แต่ performance ต่างกันมาก — Big-O คือคำตอบ</li>
+        <li>Big-O = worst-case ของ algorithm</li>
+        <li>optimization ทำให้ server เดิมรองรับ user ได้ 8-10 เท่า โดยไม่ต้องเพิ่ม spec</li>
+        <li>dev ต้องเลือก algorithm ให้เหมาะกับ trade-off</li>
+      </ul>
+      <p><strong>เหมาะกับ:</strong> อยากเข้าใจ "ทำไม Big-O ถึงสำคัญในชีวิตจริง" เป็นภาษาไทย</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script>
+  function showPage(id, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
+    document.getElementById(id).classList.add('active')
+    el.classList.add('active')
+    window.scrollTo(0, 0)
+    Prism.highlightAll()
+  }
+</script>
+</body>
+</html>
